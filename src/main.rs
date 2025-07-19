@@ -1,20 +1,55 @@
 use std::io; // imporing io from the rust standard prelude
+use rand::Rng; // brought Rng trait to scope
+use std::cmp::Ordering;
+//First we add another use statement, bringing a type called std::cmp::Ordering into scope from the standard library. The Ordering type is another enum and has the variants Less, Greater, and Equal. These are the three outcomes that are possible when you compare two values.
+
+
+
 
 fn main() {
     println!("Guess the number");
 
-    println!("Please input your guess");
+    let secret_number = rand::thread_rng().gen_range(1..=100); // generating a random number between 1 and  100
 
-    let mut guess = String::new(); // it returns  a new instnace of a  string
+    println!("Secret number {}", secret_number);
 
-    io::stdin().read_line(&mut guess).expect("Failed to read line");
 
-    println!("You guessed: {guess}");
+    loop {
+        println!("Please input your guess");
 
-    let x = 5;
-    let y = 10;
+        let mut guess = String::new(); // it returns  a new instnace of a  string
 
-    println!("x= {x} and y + x = {} ", y +2);
+        io::stdin().read_line(&mut guess).expect("Failed to read line");
+
+
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
+
+        println!("You guessed: {guess}");
+        // Shadowing original guess and trimming whitespce begiining and end 
+
+        //The parse method on strings converts a string to another type. Here, we use it to convert from a string to a number. We need to tell Rust the exact number type we want by using let guess: u32. The colon (:) after guess tells Rust we’ll annotate the variable’s type. Rust has a few built-in number types; the u32 seen here is an unsigned, 32-bit integer. I 
+
+        // The expect method is used for handling errros when the result from the 'parse' method is not succesfyl
+
+        // We switch from an expect call to a match expression to move from crashing on an error to handling the error. Remember that parse returns a Result type and Result is an enum that has the variants Ok and Err. We’re using a match expression here, as we did with the Ordering result of the cmp method.
+
+     
+
+       match guess.cmp(&secret_number) {
+          Ordering::Less =>  println!("Too small"),
+          Ordering::Greater => println!("Too big!"),
+
+          Ordering::Equal => {
+            println!("You win");
+            break;
+          }
+        }
+    }
+
+ 
 
     // By default in Rust variablrs are immutable for you to make it mutable, you need to introduce.. 'mut'
 
